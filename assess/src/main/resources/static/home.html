@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="zh">
+
+<head>
+    <title>教学质量评分平台</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
+        crossorigin="anonymous">
+
+    <!-- Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <!-- axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.js"></script>
+    <style>
+        #bg {
+            background: url(img/bg.jpg);
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            background-color: blue;
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <img src="img/1.jpg" alt="logo" />
+        <img src="img/2.jpg" alt="logo">
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+        <a class="navbar-brand text-white" href="">abc</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link text-white" href="">官网
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="bg">
+        <div id="app" class="container">
+
+            <div class="row" style="height:600px;">
+
+                <div class="col-lg-8 offset-lg-2 my-auto">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 text-center">
+                                        <img class="text-center mt-4" src="img/3.jpg" alt="" width="50%">
+                                        <div class="text-center mt-4">
+                                            <h2>教员评分平台</h2>
+                                            <img class="mt-3" src="img/4.jpg" alt="" width="70%">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div v-if="w==0">
+                                            <h5 class="card-title">用户登录</h5>
+                                            <div class="form-group">
+                                                <label for="">用户名</label>
+                                                <input type="text" class="form-control" v-model="name" placeholder="请输入用户名">
+                                                <small id="nameErr" class="form-text text-danger"></small>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="">密码</label>
+                                                <input type="password" class="form-control" v-model="password" placeholder="请输入密码">
+                                                <small id="pwdErr" class="form-text text-danger"></small>
+                                            </div>
+                                            <!-- 验证码 -->
+                                            <div class="form-group">
+                                                <label for="">验证码</label>
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <input type="text" class="form-control" v-model="check" placeholder="请输入验证码">
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <canvas @click="refresh()" id="canvas" width="112px" height="38px"></canvas>
+                                                    </div>
+                                                </div>
+                                                <small id="numErr" class="form-text text-danger"></small>
+                                            </div>
+                                            <div class="form-check my-3">
+                                                <label class="form-check-label mx-3">
+                                                    <input type="radio" class="form-check-input" name="authority" value="1" v-model="authority"> 管理员
+                                                </label>
+
+                                                <label class="form-check-label mx-3">
+                                                    <input type="radio" class="form-check-input" name="authority" value="2" v-model="authority"> 教员
+                                                </label>
+
+                                                <label class="form-check-label mx-3">
+                                                    <input type="radio" class="form-check-input" name="authority" value="3" v-model="authority"> 学员
+                                                </label>
+                                            </div>
+                                            <small id="authErr" class="form-text text-danger"></small>
+                                            <button @click="lin()" type="button" class="btn btn-success btn-lg btn-block">登录</button>
+                                            <a @click="wj()" class="btn px-0 py-0" role="button">
+                                                <small class="form-text text-muted">忘记密码</small>
+                                            </a>
+                                        </div>
+                                        <div v-show="w==1">
+                                            <h5 class="card-title">找回密码</h5>
+                                            <div class="form-group">
+                                                <label>用户名</label>
+                                                <input id="uname" v-model="username" type="text" class="form-control" placeholder="请输入用户名">
+                                                <small id="unameErr" class="form-text text-danger"></small>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="">密保问题</label>
+                                                <input id="question" type="text" class="form-control" placeholder="密保问题" readonly>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="">密保答案</label>
+                                                <input v-model="answer" type="text" class="form-control" placeholder="请输入密保答案">
+                                                <small id="ansErr" class="form-text text-danger"></small>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="">新密码</label>
+                                                <input v-model="newPwd" type="text" class="form-control" placeholder="请输入新密码">
+                                            </div>
+                                            <button @click="change()" type="button" class="btn btn-success btn-lg btn-block">提交</button>
+                                            <a @click="back()" class="btn px-0 py-0" role="button">
+                                                <small class="form-text text-muted">登录</small>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="jumbotron jumbotron-fluid mb-0 py-3 bg-primary">
+        <div class="container">
+            <div class="row text-white">
+                <div class="col-lg-6">
+                    <h5>友情链接:</h5>
+                    <p>
+                        <a class="text-white" href="">百度</a>
+                    </p>
+                </div>
+                <div class="col-lg-6 text-right">
+                    <p>
+                        COPYRIGHT(C)2001-2018版权所有：中南林业科技大学
+                        <br/> 湘ICP备16019181号-1 ALL RIGHTS RESERVED
+                        <br/> 地址：长沙市韶山南路498号
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        let v = new Vue({
+            el: '#app',
+            data: {
+                name: '',
+                password: '',
+                authority: 0,
+                //验证码****
+                checkNum: 0,
+                check: null,
+                //*********
+                //记录是否点击忘记密码
+                w: 0,
+                //忘记密码
+                username: '',
+                answer: '',
+                newPwd: '',
+            },
+            methods: {
+                lin: function () {
+                    axios.post('/v1/login/', {
+                            name: this.name,
+                            password: this.password,
+                            authority: this.authority
+                        })
+                        .then((response) => {
+                            console.log(response.data);
+
+                            if (this.checkNum == this.check) {
+                                $('#numErr').text("");
+                                if (response.data == 1) {
+                                    $('#nameErr').text("用户名不存在!");
+                                } else if (response.data == 2) {
+                                    $('#nameErr').text("");
+                                    $('#pwdErr').text("密码不正确!");
+                                } else if (response.data == 3) {
+                                    $('#pwdErr').text("");
+                                    $('#authErr').text("请选择正确的用户权限!");
+                                } else {
+                                    window.location.href = "user";
+                                }
+                            } else {
+                                $('#numErr').text("验证码输入错误!");
+                                this.checkNum = drawPic();
+                            }
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+
+                },
+                refresh: function () {
+                    this.checkNum = drawPic();
+                },
+                wj: function () {
+                    this.w = 1;
+
+                },
+                change: function () {
+                    axios.post('/v1/login/regainPwd', {
+                            name: this.username,
+                            password: this.newPwd,
+                            answer: this.answer,
+                        })
+                        .then((response) => {
+                            console.log(response.data);
+                            if(response.data){
+                                this.username='';
+                                this.answer='';
+                                this.newPwd='';
+                                this.w = 0;
+                                $('#question').val("");
+                            }else{
+                                $('#ansErr').text("密保问题答案不正确!");
+                            }
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                },
+                back: function () {
+                    this.w = 0;
+                },
+            },
+            mounted: function () {
+                this.checkNum = drawPic();
+
+                $('#uname').blur(
+                    () => {
+                        axios.get('/v1/login/secureQue', {
+                                params: {
+                                    name: this.username,
+                                }
+                            })
+                            .then((response) => {          
+                                if (response.data.user === "not") {
+                                    $('#unameErr').text("用户名不存在!");
+                                    $('#question').val("");
+                                }else if(response.data.question === "not"){
+                                    $('#unameErr').text("用户未设置密保问题,请联系管理员");
+                                    $('#question').val("");
+                                } else {
+                                    $('#question').val(response.data.securequestion);
+                                    $('#unameErr').text("");
+                                }
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+
+                    }
+                );
+
+            },
+        });
+
+        //验证码
+        //生成随机数
+        function randomNum(min, max) {
+            return Math.floor(Math.random() * (max - min) + min);
+        }
+        //生成随机颜色RGB分量
+        function randomColor(min, max) {
+            let _r = randomNum(min, max);
+            let _g = randomNum(min, max);
+            let _b = randomNum(min, max);
+            return "rgb(" + _r + "," + _g + "," + _b + ")";
+        }
+        //先阻止画布默认点击发生的行为再执行drawPic()方法
+        // document.getElementById("canvas").onclick = function (e) {
+        //     e.preventDefault();
+        //     drawPic();
+        // };
+
+        function drawPic() {
+            //获取到元素canvas
+            let $canvas = document.getElementById("canvas");
+            let _str = "0123456789"; //设置随机数库
+            let _picTxt = ""; //随机数
+            let _num = 4; //4个随机数字
+            let _width = $canvas.width;
+            let _height = $canvas.height;
+            let ctx = $canvas.getContext("2d"); //获取 context 对象
+            ctx.textBaseline = "bottom"; //文字上下对齐方式--底部对齐
+            ctx.fillStyle = randomColor(180, 240); //填充画布颜色
+            ctx.fillRect(0, 0, _width, _height); //填充矩形--画画
+            for (let i = 0; i < _num; i++) {
+                let x = (_width - 10) / _num * i + 10;
+                let y = randomNum(_height / 2, _height);
+                let deg = randomNum(-45, 45);
+                let txt = _str[randomNum(0, _str.length)];
+                _picTxt += txt; //获取一个随机数
+                ctx.fillStyle = randomColor(10, 100); //填充随机颜色
+                ctx.font = randomNum(16, 40) + "px SimHei"; //设置随机数大小，字体为SimHei
+                ctx.translate(x, y); //将当前xy坐标作为原始坐标
+                ctx.rotate(deg * Math.PI / 180); //旋转随机角度
+                ctx.fillText(txt, 0, 0); //绘制填色的文本
+                ctx.rotate(-deg * Math.PI / 180);
+                ctx.translate(-x, -y);
+            }
+            for (let i = 0; i < _num; i++) {
+                //定义笔触颜色
+                ctx.strokeStyle = randomColor(90, 180);
+                ctx.beginPath();
+                //随机划线--4条路径
+                ctx.moveTo(randomNum(0, _width), randomNum(0, _height));
+                ctx.lineTo(randomNum(0, _width), randomNum(0, _height));
+                ctx.stroke();
+            }
+            for (let i = 0; i < _num * 10; i++) {
+                ctx.fillStyle = randomColor(0, 255);
+                ctx.beginPath();
+                //随机画原，填充颜色
+                ctx.arc(randomNum(0, _width), randomNum(0, _height), 1, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            return _picTxt; //返回随机数字符串
+        }
+    </script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
